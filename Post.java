@@ -1,4 +1,5 @@
-package Model;
+package SocialMediaPlatform;  // Or delete
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

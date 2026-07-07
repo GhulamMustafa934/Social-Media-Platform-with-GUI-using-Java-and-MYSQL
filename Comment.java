@@ -1,4 +1,6 @@
-package Model;
+package SocialMediaPlatform;
+
+import java.time.LocalDateTime;
 
 public class Comment{
 
