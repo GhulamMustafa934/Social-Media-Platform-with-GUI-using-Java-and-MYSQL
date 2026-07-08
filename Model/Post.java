@@ -1,5 +1,4 @@
-package SocialMediaPlatform;  // Or delete
-
+package Model;  // ✅ Changed to Model
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,12 +7,18 @@ public class Post {
 
     private int ID;
     private String content;
-    private LocalDateTime date;
+    private LocalDateTime dateTime;  // ✅ Changed from date to dateTime
     private User user;
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
 
     public Post() {}
+
+    public Post(String content, User user) {
+        this.content = content;
+        this.user = user;
+        this.dateTime = LocalDateTime.now();
+    }
 
     public int getID() {
         return ID;
@@ -50,6 +55,7 @@ public class Post {
     public ArrayList<Comment> getComments() {
         return comments;
     }
+
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
     }
@@ -61,5 +67,4 @@ public class Post {
     public void setLikes(ArrayList<User> likes) {
         this.likes = likes;
     }
-
 }

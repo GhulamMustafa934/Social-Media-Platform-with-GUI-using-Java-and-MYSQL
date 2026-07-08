@@ -1,8 +1,9 @@
-package SocialMediaPlatform;
+package Model;  // ✅ Changed to Model
 
 import java.time.LocalDateTime;
+import Model.User;  // ✅ ADD THIS
 
-public class Comment{
+public class Comment {
 
     private int ID;
     private String content;
@@ -10,6 +11,12 @@ public class Comment{
     private LocalDateTime dateTime;
 
     public Comment() {}
+
+    public Comment(String content, User user) {
+        this.content = content;
+        this.user = user;
+        this.dateTime = LocalDateTime.now();
+    }
 
     public int getID() {
         return ID;
