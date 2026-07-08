@@ -102,7 +102,7 @@ public class Welcome {
                 
                 // ✅ SAVE TO DATABASE
                 try {
-                    CreateUser createUser = new CreateUser();  // ✅ No parameters needed
+                    CreateUser createUser = new CreateUser();
                     boolean success = createUser.registerUser(
                         firstNameText,
                         lastNameText,
@@ -127,9 +127,24 @@ public class Welcome {
         center.add(createAcc);
         panel.add(center, BorderLayout.CENTER);
 
+        // ✅ LOGIN LINK WITH ACTION
         JLabel login = new JLabel("Already have an account? Log in", 20, GUIConstants.black, Font.BOLD);
         login.setCursor(new Cursor(Cursor.HAND_CURSOR));
         login.setHorizontalAlignment(JLabel.CENTER);
+
+        login.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                frame.dispose();
+                new LoginGUI();  // ✅ Goes to Login page
+            }
+        });
+
         panel.add(login, BorderLayout.SOUTH);
 
         frame.getContentPane().add(panel);
