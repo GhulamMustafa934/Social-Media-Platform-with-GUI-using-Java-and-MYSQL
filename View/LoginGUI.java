@@ -17,7 +17,7 @@ public class LoginGUI {
 
     public LoginGUI() {
         JFrame frame = new JFrame();
-        frame.setSize(900, 625);
+        frame.setSize(900, 625);  // ✅ Same size as registration
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
@@ -31,9 +31,9 @@ public class LoginGUI {
         panel.add(titleLabel, BorderLayout.NORTH);
 
         // Center panel for form
-        JPanel center = new JPanel(new GridLayout(3, 1, 10, 10));
+        JPanel center = new JPanel(new GridLayout(3, 1, 15, 15));  // ✅ More spacing
         center.setBackground(GUIConstants.lightGray);
-        center.setBorder(BorderFactory.createEmptyBorder(22, 231, 17, 231));
+        center.setBorder(BorderFactory.createEmptyBorder(22, 231, 17, 231));  // ✅ Same as registration
 
         JTextField emailField = new JTextField("Email");
         center.add(emailField);
@@ -41,7 +41,7 @@ public class LoginGUI {
         JTextField passwordField = new JTextField("Password");
         center.add(passwordField);
 
-        JButton loginButton = new JButton("Login", 45, 20);
+        JButton loginButton = new JButton("Login", 45, 20);  // ✅ Same button size
         center.add(loginButton);
 
         panel.add(center, BorderLayout.CENTER);
@@ -74,7 +74,6 @@ public class LoginGUI {
                     return;
                 }
 
-                // ✅ Login user
                 try {
                     LoginUser loginUser = new LoginUser();
                     User user = loginUser.loginUser(email, password);
@@ -82,7 +81,6 @@ public class LoginGUI {
                     if (user != null) {
                         new Alert("Login Successful! Welcome " + user.getFirstName(), frame);
                         frame.dispose();
-                        // Open Dashboard
                         new DashboardGUI(user);
                     } else {
                         new Alert("Invalid email or password!", frame);
@@ -104,7 +102,7 @@ public class LoginGUI {
             @Override
             public void mouseClicked(MouseEvent e) {
                 frame.dispose();
-                new Welcome(); // Open registration page
+                new Welcome();
             }
         });
 
