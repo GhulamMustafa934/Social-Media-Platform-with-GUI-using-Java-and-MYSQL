@@ -1,4 +1,4 @@
-package Model;  // ✅ Changed to Model
+package Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,17 +7,23 @@ public class Post {
 
     private int ID;
     private String content;
-    private LocalDateTime dateTime;  // ✅ Changed from date to dateTime
+    private LocalDateTime dateTime;
     private User user;
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
 
-    public Post() {}
+    public Post() {
+        // ✅ Initialize lists to avoid null
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
+    }
 
     public Post(String content, User user) {
         this.content = content;
         this.user = user;
         this.dateTime = LocalDateTime.now();
+        this.comments = new ArrayList<>();  // ✅ Initialize
+        this.likes = new ArrayList<>();     // ✅ Initialize
     }
 
     public int getID() {
@@ -26,6 +32,15 @@ public class Post {
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    // ✅ Add these for compatibility
+    public int getId() {
+        return ID;
+    }
+
+    public void setId(int id) {
+        this.ID = id;
     }
 
     public String getContent() {
