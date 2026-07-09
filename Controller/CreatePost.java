@@ -1,12 +1,13 @@
 package Controller;
 
-import View.Database;
-import Model.Post;
-import Model.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import Model.Post;
+import Model.User;
+import View.Database;
 
 public class CreatePost {
     
@@ -18,17 +19,24 @@ public class CreatePost {
         statement = database.getStatement();
     }
     
-    // Save post to database
-    public boolean savePost(Post post) {
+    // ✅ UPDATED: Save post and return the generated ID
+    public int savePost(Post post) {
         try {
             String query = "INSERT INTO posts (content, userId, dateTime) VALUES ('"
                 + post.getContent() + "', " + post.getUser().getID() + ", NOW())";
             
-            int result = statement.executeUpdate(query);
-            return result > 0;
+            int result = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+            
+            if (result > 0) {
+                ResultSet rs = statement.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);  // Return the new post ID
+                }
+            }
+            return -1;  // Failed to get ID
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
     

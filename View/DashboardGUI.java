@@ -1,23 +1,29 @@
 package View;
 
-import Model.Post;
-import Model.User;
-import Controller.CreatePost;
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import Controller.CreatePost;
+import Controller.LikePost;
+import Model.Post;
+import Model.User;
+
 public class DashboardGUI {
     
     private User currentUser;
-    private JTextArea feedArea;
+    private JPanel feedPanel;
     private JFrame frame;
     
     public DashboardGUI(User user) {
@@ -36,16 +42,18 @@ public class DashboardGUI {
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(GUIConstants.lightGray);
         
-        JLabel welcomeLabel = new JLabel("Welcome, " + user.getFirstName() + " " + user.getLastName() + "!", 
-            24, GUIConstants.blue, Font.BOLD);
+        JLabel welcomeLabel = new JLabel("Welcome, " + user.getFirstName() + " " + user.getLastName() + "!");
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setForeground(GUIConstants.blue);
         topPanel.add(welcomeLabel, BorderLayout.WEST);
         
-        JButton logoutButton = new JButton("Logout", 30, 15);
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         topPanel.add(logoutButton, BorderLayout.EAST);
         
         mainPanel.add(topPanel, BorderLayout.NORTH);
         
-        // Center Panel: Create Post + Feed
+        // Center Panel
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
         centerPanel.setBackground(GUIConstants.lightGray);
         
@@ -60,7 +68,8 @@ public class DashboardGUI {
         postArea.setWrapStyleWord(true);
         postArea.setText("What's on your mind?");
         
-        JButton postButton = new JButton("Post", 30, 15);
+        JButton postButton = new JButton("Post");
+        postButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
         postPanel.add(new JScrollPane(postArea), BorderLayout.CENTER);
         postPanel.add(postButton, BorderLayout.EAST);
@@ -68,19 +77,15 @@ public class DashboardGUI {
         centerPanel.add(postPanel, BorderLayout.NORTH);
         
         // Feed Section
-        JPanel feedPanel = new JPanel(new BorderLayout());
+        feedPanel = new JPanel();
+        feedPanel.setLayout(new GridLayout(0, 1, 5, 5));
         feedPanel.setBackground(GUIConstants.white);
-        feedPanel.setBorder(BorderFactory.createTitledBorder("Feed"));
         
-        feedArea = new JTextArea(10, 30);
-        feedArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        feedArea.setEditable(false);
-        feedArea.setLineWrap(true);
-        feedArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(feedPanel);
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Feed"));
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         
-        feedPanel.add(new JScrollPane(feedArea), BorderLayout.CENTER);
-        
-        centerPanel.add(feedPanel, BorderLayout.CENTER);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
         
         mainPanel.add(centerPanel, BorderLayout.CENTER);
         
@@ -118,9 +123,9 @@ public class DashboardGUI {
                 
                 Post post = new Post(content, currentUser);
                 CreatePost createPost = new CreatePost();
-                boolean success = createPost.savePost(post);
+                int postId = createPost.savePost(post);
                 
-                if (success) {
+                if (postId > 0) {
                     new Alert("Post created successfully!", frame);
                     postArea.setText("What's on your mind?");
                     loadFeed();
@@ -137,33 +142,99 @@ public class DashboardGUI {
     
     private void loadFeed() {
         try {
+            feedPanel.removeAll();
             CreatePost createPost = new CreatePost();
+            LikePost likePost = new LikePost();
             java.util.ArrayList<Post> posts = createPost.getAllPosts();
             
-            StringBuilder feed = new StringBuilder();
-            for (Post post : posts) {
-                feed.append("👤 ").append(post.getUser().getFirstName())
-                    .append(" ").append(post.getUser().getLastName())
-                    .append(" (").append(post.getDateTime().toLocalDate()).append(")\n");
-                feed.append(post.getContent()).append("\n");
-                
-                // ✅ NULL SAFETY CHECKS
-                int likesCount = post.getLikes() != null ? post.getLikes().size() : 0;
-                int commentsCount = post.getComments() != null ? post.getComments().size() : 0;
-                
-                feed.append("❤️ ").append(likesCount).append(" likes | ")
-                    .append("💬 ").append(commentsCount).append(" comments\n");
-                feed.append("─────────────────────────────────────\n\n");
+            if (posts.isEmpty()) {
+                JLabel emptyLabel = new JLabel("No posts yet. Be the first to post!");
+                emptyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+                emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                feedPanel.add(emptyLabel);
+            } else {
+                for (Post post : posts) {
+                    feedPanel.add(createPostCard(post, likePost));
+                }
             }
             
-            if (feed.length() == 0) {
-                feed.append("No posts yet. Be the first to post!");
-            }
-            
-            feedArea.setText(feed.toString());
+            feedPanel.revalidate();
+            feedPanel.repaint();
         } catch (Exception e) {
             e.printStackTrace();
-            feedArea.setText("Error loading feed: " + e.getMessage());
         }
+    }
+    
+    private JPanel createPostCard(Post post, LikePost likePost) {
+        JPanel card = new JPanel(new BorderLayout(10, 5));
+        card.setBackground(GUIConstants.white);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(GUIConstants.lightGray, 1),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+        
+        // Header: User name
+        JLabel userLabel = new JLabel("👤 " + post.getUser().getFirstName() + " " + post.getUser().getLastName());
+        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        userLabel.setForeground(GUIConstants.black);
+        card.add(userLabel, BorderLayout.NORTH);
+        
+        // Content
+        JTextArea contentArea = new JTextArea(post.getContent());
+        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        contentArea.setEditable(false);
+        contentArea.setLineWrap(true);
+        contentArea.setWrapStyleWord(true);
+        contentArea.setBackground(GUIConstants.white);
+        contentArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        card.add(contentArea, BorderLayout.CENTER);
+        
+        // Bottom: Like button + counts
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setBackground(GUIConstants.white);
+        
+        int postId = post.getId();
+        int likesCount = likePost.getLikesCount(postId);
+        
+        JLabel likesLabel = new JLabel("❤️ " + likesCount + " likes");
+        likesLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        likesLabel.setForeground(GUIConstants.black);
+        bottomPanel.add(likesLabel, BorderLayout.WEST);
+        
+        boolean hasLiked = likePost.hasLiked(postId, currentUser.getID());
+        
+        JButton likeButton = new JButton(hasLiked ? "Unlike" : "Like");
+        likeButton.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        likeButton.setForeground(hasLiked ? GUIConstants.blue : GUIConstants.black);
+        
+        likeButton.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int userId = currentUser.getID();
+                boolean success;
+                
+                if (hasLiked) {
+                    success = likePost.removeLike(postId, userId);
+                } else {
+                    success = likePost.addLike(postId, userId);
+                }
+                
+                if (success) {
+                    loadFeed();
+                } else {
+                    new Alert("Failed to update like!", frame);
+                }
+            }
+        });
+        
+        bottomPanel.add(likeButton, BorderLayout.EAST);
+        card.add(bottomPanel, BorderLayout.SOUTH);
+        
+        return card;
     }
 }
