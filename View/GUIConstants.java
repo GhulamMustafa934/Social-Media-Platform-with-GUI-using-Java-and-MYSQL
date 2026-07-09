@@ -1,10 +1,14 @@
 package View;
 
+import java.awt.Color;
+
 public class GUIConstants {
-    public static java.awt.Color white = java.awt.Color.white;
-    public static java.awt.Color lightGray = java.awt.Color.LIGHT_GRAY;
-    public static java.awt.Color black = java.awt.Color.black;
-    public static java.awt.Color blue = java.awt.Color.decode("#02A1FC");
-    public static java.awt.Color textFieldHint = java.awt.Color.decode("#959595");
-    public static java.awt.Color background = java.awt.Color.LIGHT_GRAY;
+    public static Color white = Color.WHITE;
+    public static Color lightGray = Color.LIGHT_GRAY;
+    public static Color black = Color.BLACK;
+    public static Color blue = new Color(2, 161, 252);
+    public static Color red = Color.RED;
+    public static Color green = new Color(46, 204, 113);
+    public static Color textFieldHint = Color.decode("#959595");
+    public static Color background = Color.LIGHT_GRAY;  // ✅ ADD THIS
 }
