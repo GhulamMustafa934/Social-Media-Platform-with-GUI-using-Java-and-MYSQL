@@ -25,7 +25,6 @@ public class Comment {
         this.ID = ID;
     }
 
-    // ✅ ADD THESE METHODS FOR COMPATIBILITY
     public int getId() {
         return ID;
     }

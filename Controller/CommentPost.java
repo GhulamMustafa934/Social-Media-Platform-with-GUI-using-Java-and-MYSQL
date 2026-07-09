@@ -18,6 +18,7 @@ public class CommentPost {
         statement = database.getStatement();
     }
     
+    // Add comment
     public boolean addComment(int postId, int userId, String content) {
         try {
             String query = "INSERT INTO comments (postId, userId, content) VALUES ("
@@ -30,6 +31,7 @@ public class CommentPost {
         }
     }
     
+    // Delete comment
     public boolean deleteComment(int commentId) {
         try {
             String query = "DELETE FROM comments WHERE id = " + commentId;
@@ -41,6 +43,31 @@ public class CommentPost {
         }
     }
     
+    // ✅ Update comment (FIXED)
+    public boolean updateComment(int commentId, String newContent) {
+        try {
+            String query = "UPDATE comments SET content = '" + newContent + "' WHERE id = " + commentId;
+            int result = statement.executeUpdate(query);
+            return result > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // ✅ Check if user owns comment
+    public boolean isCommentOwner(int commentId, int userId) {
+        try {
+            String query = "SELECT * FROM comments WHERE id = " + commentId + " AND userId = " + userId;
+            ResultSet rs = statement.executeQuery(query);
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // Get comments for a post
     public ArrayList<Comment> getCommentsForPost(int postId) {
         ArrayList<Comment> comments = new ArrayList<>();
         try {
@@ -70,6 +97,7 @@ public class CommentPost {
         return comments;
     }
     
+    // Get comment count for a post
     public int getCommentCount(int postId) {
         try {
             String query = "SELECT COUNT(*) as count FROM comments WHERE postId = " + postId;

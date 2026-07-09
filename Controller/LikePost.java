@@ -17,7 +17,6 @@ public class LikePost {
         statement = database.getStatement();
     }
     
-    // Add like
     public boolean addLike(int postId, int userId) {
         try {
             String query = "INSERT INTO likes (postId, userId) VALUES (" + postId + ", " + userId + ")";
@@ -29,7 +28,6 @@ public class LikePost {
         }
     }
     
-    // Remove like
     public boolean removeLike(int postId, int userId) {
         try {
             String query = "DELETE FROM likes WHERE postId = " + postId + " AND userId = " + userId;
@@ -41,7 +39,6 @@ public class LikePost {
         }
     }
     
-    // Check if user already liked a post
     public boolean hasLiked(int postId, int userId) {
         try {
             String query = "SELECT * FROM likes WHERE postId = " + postId + " AND userId = " + userId;
@@ -53,7 +50,6 @@ public class LikePost {
         }
     }
     
-    // Get likes count for a post
     public int getLikesCount(int postId) {
         try {
             String query = "SELECT COUNT(*) as count FROM likes WHERE postId = " + postId;

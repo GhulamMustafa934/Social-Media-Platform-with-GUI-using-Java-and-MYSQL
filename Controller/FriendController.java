@@ -17,7 +17,6 @@ public class FriendController {
         statement = database.getStatement();
     }
     
-    // Send friend request
     public boolean sendRequest(int userId, int friendId) {
         try {
             String query = "INSERT INTO friends (userId, friendId, status) VALUES ("
@@ -30,7 +29,6 @@ public class FriendController {
         }
     }
     
-    // Accept friend request
     public boolean acceptRequest(int userId, int friendId) {
         try {
             String query = "UPDATE friends SET status = 'accepted' WHERE userId = " + friendId + " AND friendId = " + userId;
@@ -42,7 +40,6 @@ public class FriendController {
         }
     }
     
-    // Reject/Delete friend request
     public boolean rejectRequest(int userId, int friendId) {
         try {
             String query = "DELETE FROM friends WHERE userId = " + friendId + " AND friendId = " + userId;
@@ -54,7 +51,6 @@ public class FriendController {
         }
     }
     
-    // Remove friend
     public boolean removeFriend(int userId, int friendId) {
         try {
             String query = "DELETE FROM friends WHERE (userId = " + userId + " AND friendId = " + friendId + ") OR (userId = " + friendId + " AND friendId = " + userId + ")";
@@ -66,7 +62,6 @@ public class FriendController {
         }
     }
     
-    // Get friends list (accepted)
     public ArrayList<User> getFriends(int userId) {
         ArrayList<User> friends = new ArrayList<>();
         try {
@@ -91,7 +86,6 @@ public class FriendController {
         return friends;
     }
     
-    // Get pending requests (received)
     public ArrayList<User> getPendingRequests(int userId) {
         ArrayList<User> requests = new ArrayList<>();
         try {
@@ -115,7 +109,6 @@ public class FriendController {
         return requests;
     }
     
-    // Check if already friends or pending
     public String getFriendStatus(int userId, int friendId) {
         try {
             String query = "SELECT status FROM friends WHERE (userId = " + userId + " AND friendId = " + friendId + ") OR (userId = " + friendId + " AND friendId = " + userId + ")";
@@ -129,7 +122,6 @@ public class FriendController {
         return "none";
     }
     
-    // Search users
     public ArrayList<User> searchUsers(String keyword, int currentUserId) {
         ArrayList<User> users = new ArrayList<>();
         try {
