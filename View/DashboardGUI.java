@@ -50,9 +50,23 @@ public class DashboardGUI {
         welcomeLabel.setForeground(GUIConstants.blue);
         topPanel.add(welcomeLabel, BorderLayout.WEST);
         
+        // ✅ RIGHT PANEL: Profile + Friends + Logout buttons
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setBackground(GUIConstants.lightGray);
+        
+        JButton profileButton = new JButton("👤 Profile");
+        profileButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        rightPanel.add(profileButton);
+        
+        JButton friendsButton = new JButton("👥 Friends");
+        friendsButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        rightPanel.add(friendsButton);
+        
         JButton logoutButton = new JButton("Logout");
         logoutButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        topPanel.add(logoutButton, BorderLayout.EAST);
+        rightPanel.add(logoutButton);
+        
+        topPanel.add(rightPanel, BorderLayout.EAST);
         mainPanel.add(topPanel, BorderLayout.NORTH);
         
         // Create Post
@@ -66,6 +80,7 @@ public class DashboardGUI {
         postArea.setText("What's on your mind?");
         
         JButton postButton = new JButton("Post");
+        postButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
         postPanel.add(new JScrollPane(postArea), BorderLayout.CENTER);
         postPanel.add(postButton, BorderLayout.EAST);
@@ -81,6 +96,31 @@ public class DashboardGUI {
         mainPanel.add(scrollPane, BorderLayout.SOUTH);
         
         loadFeed();
+        
+        // ✅ Profile Button Action
+        profileButton.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                frame.dispose();
+                new ProfileGUI(currentUser);
+            }
+        });
+        
+        // ✅ Friends Button Action
+        friendsButton.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new FriendsGUI(currentUser);
+            }
+        });
         
         // Logout
         logoutButton.addMouseListener(new MouseListener() {
@@ -168,6 +208,7 @@ public class DashboardGUI {
         // User name
         JLabel userLabel = new JLabel("👤 " + post.getUser().getFirstName() + " " + post.getUser().getLastName());
         userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        userLabel.setForeground(GUIConstants.black);
         card.add(userLabel, BorderLayout.NORTH);
         
         // Content
@@ -184,11 +225,13 @@ public class DashboardGUI {
         int likes = likePost.getLikesCount(postId);
         boolean liked = likePost.hasLiked(postId, currentUser.getID());
         JButton likeBtn = new JButton((liked ? "❤️ Unlike" : "🤍 Like") + " (" + likes + ")");
+        likeBtn.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         buttonPanel.add(likeBtn);
         
         // Comment button
         int comments = commentPost.getCommentCount(postId);
         JButton commentBtn = new JButton("💬 Comment (" + comments + ")");
+        commentBtn.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         buttonPanel.add(commentBtn);
         
         card.add(buttonPanel, BorderLayout.SOUTH);

@@ -1,8 +1,8 @@
 package Model;
 
 import java.util.ArrayList;
-import Model.Post;      // ✅ ADD THIS
-import Model.Comment;   // ✅ ADD THIS
+import Model.Post;
+import Model.Comment;
 
 public class User {
 
@@ -23,14 +23,28 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.posts = new ArrayList<>();
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
+        this.friends = new ArrayList<>();
     }
 
+    // ✅ EXISTING GETTERS/SETTERS (keep these)
     public int getID() {
         return ID;
     }
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    // ✅ ADD THESE FOR COMPATIBILITY
+    public int getId() {
+        return ID;
+    }
+
+    public void setId(int id) {
+        this.ID = id;
     }
 
     public String getFirstName() {
@@ -103,8 +117,10 @@ public class User {
 
     public ArrayList<Integer> getFriendsIDs() {
         ArrayList<Integer> ids = new ArrayList<>();
-        for (User friend : friends) {
-            ids.add(friend.getID());
+        if (friends != null) {
+            for (User friend : friends) {
+                ids.add(friend.getID());
+            }
         }
         return ids;
     }
