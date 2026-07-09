@@ -1,10 +1,12 @@
 package View;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import Controller.CommentPost;
 import Controller.CreatePost;
 import Controller.LikePost;
 import Model.Post;
@@ -38,7 +41,7 @@ public class DashboardGUI {
         mainPanel.setBackground(GUIConstants.lightGray);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        // Top Panel: Welcome + Logout
+        // Top Panel
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(GUIConstants.lightGray);
         
@@ -50,14 +53,9 @@ public class DashboardGUI {
         JButton logoutButton = new JButton("Logout");
         logoutButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         topPanel.add(logoutButton, BorderLayout.EAST);
-        
         mainPanel.add(topPanel, BorderLayout.NORTH);
         
-        // Center Panel
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        centerPanel.setBackground(GUIConstants.lightGray);
-        
-        // Create Post Section
+        // Create Post
         JPanel postPanel = new JPanel(new BorderLayout(5, 5));
         postPanel.setBackground(GUIConstants.white);
         postPanel.setBorder(BorderFactory.createTitledBorder("Create Post"));
@@ -65,40 +63,31 @@ public class DashboardGUI {
         JTextArea postArea = new JTextArea(3, 30);
         postArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         postArea.setLineWrap(true);
-        postArea.setWrapStyleWord(true);
         postArea.setText("What's on your mind?");
         
         JButton postButton = new JButton("Post");
-        postButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         
         postPanel.add(new JScrollPane(postArea), BorderLayout.CENTER);
         postPanel.add(postButton, BorderLayout.EAST);
+        mainPanel.add(postPanel, BorderLayout.CENTER);
         
-        centerPanel.add(postPanel, BorderLayout.NORTH);
-        
-        // Feed Section
+        // Feed
         feedPanel = new JPanel();
         feedPanel.setLayout(new GridLayout(0, 1, 5, 5));
         feedPanel.setBackground(GUIConstants.white);
         
         JScrollPane scrollPane = new JScrollPane(feedPanel);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Feed"));
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        mainPanel.add(scrollPane, BorderLayout.SOUTH);
         
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
-        
-        mainPanel.add(centerPanel, BorderLayout.CENTER);
-        
-        // Load Feed
         loadFeed();
         
-        // Logout Action
+        // Logout
         logoutButton.addMouseListener(new MouseListener() {
             @Override public void mouseReleased(MouseEvent e) {}
             @Override public void mousePressed(MouseEvent e) {}
             @Override public void mouseExited(MouseEvent e) {}
             @Override public void mouseEntered(MouseEvent e) {}
-            
             @Override
             public void mouseClicked(MouseEvent e) {
                 frame.dispose();
@@ -106,13 +95,12 @@ public class DashboardGUI {
             }
         });
         
-        // Post Button Action
+        // Post
         postButton.addMouseListener(new MouseListener() {
             @Override public void mouseReleased(MouseEvent e) {}
             @Override public void mousePressed(MouseEvent e) {}
             @Override public void mouseExited(MouseEvent e) {}
             @Override public void mouseEntered(MouseEvent e) {}
-            
             @Override
             public void mouseClicked(MouseEvent e) {
                 String content = postArea.getText();
@@ -126,7 +114,7 @@ public class DashboardGUI {
                 int postId = createPost.savePost(post);
                 
                 if (postId > 0) {
-                    new Alert("Post created successfully!", frame);
+                    new Alert("Post created!", frame);
                     postArea.setText("What's on your mind?");
                     loadFeed();
                 } else {
@@ -145,16 +133,17 @@ public class DashboardGUI {
             feedPanel.removeAll();
             CreatePost createPost = new CreatePost();
             LikePost likePost = new LikePost();
-            java.util.ArrayList<Post> posts = createPost.getAllPosts();
+            CommentPost commentPost = new CommentPost();
+            ArrayList<Post> posts = createPost.getAllPosts();
             
             if (posts.isEmpty()) {
-                JLabel emptyLabel = new JLabel("No posts yet. Be the first to post!");
+                JLabel emptyLabel = new JLabel("No posts yet!");
                 emptyLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
                 emptyLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 feedPanel.add(emptyLabel);
             } else {
                 for (Post post : posts) {
-                    feedPanel.add(createPostCard(post, likePost));
+                    feedPanel.add(createPostCard(post, likePost, commentPost));
                 }
             }
             
@@ -165,75 +154,77 @@ public class DashboardGUI {
         }
     }
     
-    private JPanel createPostCard(Post post, LikePost likePost) {
-        JPanel card = new JPanel(new BorderLayout(10, 5));
+    private JPanel createPostCard(Post post, LikePost likePost, CommentPost commentPost) {
+        JPanel card = new JPanel();
+        card.setLayout(new BorderLayout(10, 5));
         card.setBackground(GUIConstants.white);
         card.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(GUIConstants.lightGray, 1),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
         
-        // Header: User name
+        int postId = post.getId();
+        
+        // User name
         JLabel userLabel = new JLabel("👤 " + post.getUser().getFirstName() + " " + post.getUser().getLastName());
         userLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        userLabel.setForeground(GUIConstants.black);
         card.add(userLabel, BorderLayout.NORTH);
         
         // Content
-        JTextArea contentArea = new JTextArea(post.getContent());
-        contentArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        contentArea.setEditable(false);
-        contentArea.setLineWrap(true);
-        contentArea.setWrapStyleWord(true);
-        contentArea.setBackground(GUIConstants.white);
-        contentArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        card.add(contentArea, BorderLayout.CENTER);
+        JLabel contentLabel = new JLabel(post.getContent());
+        contentLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        contentLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        card.add(contentLabel, BorderLayout.CENTER);
         
-        // Bottom: Like button + counts
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setBackground(GUIConstants.white);
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.setBackground(GUIConstants.white);
         
-        int postId = post.getId();
-        int likesCount = likePost.getLikesCount(postId);
+        // Like button
+        int likes = likePost.getLikesCount(postId);
+        boolean liked = likePost.hasLiked(postId, currentUser.getID());
+        JButton likeBtn = new JButton((liked ? "❤️ Unlike" : "🤍 Like") + " (" + likes + ")");
+        buttonPanel.add(likeBtn);
         
-        JLabel likesLabel = new JLabel("❤️ " + likesCount + " likes");
-        likesLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        likesLabel.setForeground(GUIConstants.black);
-        bottomPanel.add(likesLabel, BorderLayout.WEST);
+        // Comment button
+        int comments = commentPost.getCommentCount(postId);
+        JButton commentBtn = new JButton("💬 Comment (" + comments + ")");
+        buttonPanel.add(commentBtn);
         
-        boolean hasLiked = likePost.hasLiked(postId, currentUser.getID());
+        card.add(buttonPanel, BorderLayout.SOUTH);
         
-        JButton likeButton = new JButton(hasLiked ? "Unlike" : "Like");
-        likeButton.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        likeButton.setForeground(hasLiked ? GUIConstants.blue : GUIConstants.black);
-        
-        likeButton.addMouseListener(new MouseListener() {
+        // Like action
+        likeBtn.addMouseListener(new MouseListener() {
             @Override public void mouseReleased(MouseEvent e) {}
             @Override public void mousePressed(MouseEvent e) {}
             @Override public void mouseExited(MouseEvent e) {}
             @Override public void mouseEntered(MouseEvent e) {}
-            
             @Override
             public void mouseClicked(MouseEvent e) {
-                int userId = currentUser.getID();
-                boolean success;
-                
-                if (hasLiked) {
-                    success = likePost.removeLike(postId, userId);
+                if (liked) {
+                    likePost.removeLike(postId, currentUser.getID());
                 } else {
-                    success = likePost.addLike(postId, userId);
+                    likePost.addLike(postId, currentUser.getID());
                 }
-                
-                if (success) {
-                    loadFeed();
-                } else {
-                    new Alert("Failed to update like!", frame);
-                }
+                loadFeed();
             }
         });
         
-        bottomPanel.add(likeButton, BorderLayout.EAST);
-        card.add(bottomPanel, BorderLayout.SOUTH);
+        // Comment action
+        commentBtn.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String comment = javax.swing.JOptionPane.showInputDialog(frame, "Write a comment:");
+                if (comment != null && !comment.trim().isEmpty()) {
+                    commentPost.addComment(postId, currentUser.getID(), comment);
+                    loadFeed();
+                }
+            }
+        });
         
         return card;
     }

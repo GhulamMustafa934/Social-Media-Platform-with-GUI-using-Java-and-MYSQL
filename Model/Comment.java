@@ -1,7 +1,6 @@
-package Model;  // ✅ Changed to Model
+package Model;
 
 import java.time.LocalDateTime;
-import Model.User;  // ✅ ADD THIS
 
 public class Comment {
 
@@ -24,6 +23,15 @@ public class Comment {
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    // ✅ ADD THESE METHODS FOR COMPATIBILITY
+    public int getId() {
+        return ID;
+    }
+
+    public void setId(int id) {
+        this.ID = id;
     }
 
     public String getContent() {
