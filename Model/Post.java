@@ -7,13 +7,13 @@ public class Post {
 
     private int ID;
     private String content;
+    private String imagePath;  // ✅ NEW: Store image file path
     private LocalDateTime dateTime;
     private User user;
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
 
     public Post() {
-        // ✅ Initialize lists to avoid null
         this.comments = new ArrayList<>();
         this.likes = new ArrayList<>();
     }
@@ -22,8 +22,18 @@ public class Post {
         this.content = content;
         this.user = user;
         this.dateTime = LocalDateTime.now();
-        this.comments = new ArrayList<>();  // ✅ Initialize
-        this.likes = new ArrayList<>();     // ✅ Initialize
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
+    }
+
+    // ✅ NEW: Constructor with image
+    public Post(String content, String imagePath, User user) {
+        this.content = content;
+        this.imagePath = imagePath;
+        this.user = user;
+        this.dateTime = LocalDateTime.now();
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
     }
 
     public int getID() {
@@ -49,6 +59,15 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    // ✅ NEW: Image getter and setter
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public LocalDateTime getDateTime() {
