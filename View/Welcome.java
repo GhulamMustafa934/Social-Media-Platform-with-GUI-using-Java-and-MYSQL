@@ -31,30 +31,52 @@ public class Welcome {
         center.setBackground(GUIConstants.darkBg);
         center.setBorder(BorderFactory.createEmptyBorder(22, 231, 17, 231));
         
-        JTextField firstName = new JTextField("First Name");
+        JTextField firstName = new JTextField("Enter your first name");
         styleTextField(firstName);
         center.add(firstName);
         
-        JTextField lastName = new JTextField("Last Name");
+        JTextField lastName = new JTextField("Enter your last name");
         styleTextField(lastName);
         center.add(lastName);
         
-        JTextField email = new JTextField("Email");
+        JTextField email = new JTextField("Enter your email");
         styleTextField(email);
         center.add(email);
         
-        JTextField password = new JTextField("Password");
+        JTextField password = new JTextField("Enter your password");
         styleTextField(password);
         center.add(password);
         
-        JTextField confirmPassword = new JTextField("Confirm Password");
+        JTextField confirmPassword = new JTextField("Re-enter your password");
         styleTextField(confirmPassword);
         center.add(confirmPassword);
         
+        // ✅ Create Account Button
         JButton createAcc = new JButton("Create Account", 45, 20);
         createAcc.setBackground(GUIConstants.btnPrimary);
         createAcc.setForeground(GUIConstants.textWhite);
         center.add(createAcc);
+        
+        panel.add(center, BorderLayout.CENTER);
+
+        JLabel login = new JLabel("Already have an account? Log in", 20, GUIConstants.textGray, Font.BOLD);
+        login.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        login.setHorizontalAlignment(JLabel.CENTER);
+
+        login.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) {}
+            @Override public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                frame.dispose();
+                new LoginGUI();
+            }
+        });
+
+        panel.add(login, BorderLayout.SOUTH);
 
         createAcc.addMouseListener(new MouseListener() {
             @Override
@@ -76,22 +98,22 @@ public class Welcome {
                 String passwordText = password.getText();
                 String confirmPasswordText = confirmPassword.getText();
                 
-                if (firstNameText.isEmpty() || firstNameText.equals("First Name")) {
+                if (firstNameText.isEmpty() || firstNameText.equals("Enter your first name")) {
                     new Alert("First Name cannot be empty", frame);
                     return;
                 }
                 
-                if (lastNameText.isEmpty() || lastNameText.equals("Last Name")) {
+                if (lastNameText.isEmpty() || lastNameText.equals("Enter your last name")) {
                     new Alert("Last Name cannot be empty", frame);
                     return;
                 }
 
-                if (emailText.isEmpty() || emailText.equals("Email")) {
+                if (emailText.isEmpty() || emailText.equals("Enter your email")) {
                     new Alert("Email cannot be empty", frame);
                     return;
                 }
 
-                if (passwordText.isEmpty() || passwordText.equals("Password")) {
+                if (passwordText.isEmpty() || passwordText.equals("Enter your password")) {
                     new Alert("Password cannot be empty", frame);
                     return;
                 }
@@ -101,7 +123,7 @@ public class Welcome {
                     return;
                 }
 
-                if (confirmPasswordText.isEmpty() || confirmPasswordText.equals("Confirm Password")) {
+                if (confirmPasswordText.isEmpty() || confirmPasswordText.equals("Re-enter your password")) {
                     new Alert("Please confirm password", frame);
                     return;
                 }
@@ -134,28 +156,6 @@ public class Welcome {
             }
         });
 
-        center.add(createAcc);
-        panel.add(center, BorderLayout.CENTER);
-
-        JLabel login = new JLabel("Already have an account? Log in", 20, GUIConstants.textGray, Font.BOLD);
-        login.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        login.setHorizontalAlignment(JLabel.CENTER);
-
-        login.addMouseListener(new MouseListener() {
-            @Override public void mouseReleased(MouseEvent e) {}
-            @Override public void mousePressed(MouseEvent e) {}
-            @Override public void mouseExited(MouseEvent e) {}
-            @Override public void mouseEntered(MouseEvent e) {}
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                frame.dispose();
-                new LoginGUI();
-            }
-        });
-
-        panel.add(login, BorderLayout.SOUTH);
-
         frame.getContentPane().add(panel);
         frame.setVisible(true);
         frame.requestFocus();
@@ -163,7 +163,7 @@ public class Welcome {
 
     private void styleTextField(JTextField field) {
         field.setBackground(GUIConstants.darkCard);
-        field.setForeground(GUIConstants.textWhite);
+        field.setForeground(GUIConstants.textGray);
         field.setCaretColor(GUIConstants.textWhite);
         field.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(GUIConstants.darkBorder, 1),
