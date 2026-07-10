@@ -20,32 +20,41 @@ public class Welcome {
         frame.setSize(900, 625);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
+        frame.getContentPane().setBackground(GUIConstants.darkBg);
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(GUIConstants.lightGray);
+        panel.setBackground(GUIConstants.darkBg);
         panel.setBorder(BorderFactory.createEmptyBorder(53, 84, 76, 84));
-        panel.add(new JLabel("Welcome", 40, GUIConstants.blue, Font.BOLD), BorderLayout.NORTH);
+        panel.add(new JLabel("Welcome", 40, GUIConstants.accentBlue, Font.BOLD), BorderLayout.NORTH);
         
         JPanel center = new JPanel(new GridLayout(6, 1, 10, 10));
-        center.setBackground(GUIConstants.lightGray);
+        center.setBackground(GUIConstants.darkBg);
         center.setBorder(BorderFactory.createEmptyBorder(22, 231, 17, 231));
         
         JTextField firstName = new JTextField("First Name");
+        styleTextField(firstName);
         center.add(firstName);
         
         JTextField lastName = new JTextField("Last Name");
+        styleTextField(lastName);
         center.add(lastName);
         
         JTextField email = new JTextField("Email");
+        styleTextField(email);
         center.add(email);
         
         JTextField password = new JTextField("Password");
+        styleTextField(password);
         center.add(password);
         
         JTextField confirmPassword = new JTextField("Confirm Password");
+        styleTextField(confirmPassword);
         center.add(confirmPassword);
         
         JButton createAcc = new JButton("Create Account", 45, 20);
+        createAcc.setBackground(GUIConstants.btnPrimary);
+        createAcc.setForeground(GUIConstants.textWhite);
+        center.add(createAcc);
 
         createAcc.addMouseListener(new MouseListener() {
             @Override
@@ -55,7 +64,9 @@ public class Welcome {
             @Override
             public void mouseExited(MouseEvent e) {}
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {
+                createAcc.setBackground(GUIConstants.btnPrimaryHover);
+            }
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -100,7 +111,6 @@ public class Welcome {
                     return;
                 }
                 
-                // ✅ SAVE TO DATABASE
                 try {
                     CreateUser createUser = new CreateUser();
                     boolean success = createUser.registerUser(
@@ -127,8 +137,7 @@ public class Welcome {
         center.add(createAcc);
         panel.add(center, BorderLayout.CENTER);
 
-        // ✅ LOGIN LINK WITH ACTION
-        JLabel login = new JLabel("Already have an account? Log in", 20, GUIConstants.black, Font.BOLD);
+        JLabel login = new JLabel("Already have an account? Log in", 20, GUIConstants.textGray, Font.BOLD);
         login.setCursor(new Cursor(Cursor.HAND_CURSOR));
         login.setHorizontalAlignment(JLabel.CENTER);
 
@@ -141,7 +150,7 @@ public class Welcome {
             @Override
             public void mouseClicked(MouseEvent e) {
                 frame.dispose();
-                new LoginGUI();  // ✅ Goes to Login page
+                new LoginGUI();
             }
         });
 
@@ -150,5 +159,15 @@ public class Welcome {
         frame.getContentPane().add(panel);
         frame.setVisible(true);
         frame.requestFocus();
+    }
+
+    private void styleTextField(JTextField field) {
+        field.setBackground(GUIConstants.darkCard);
+        field.setForeground(GUIConstants.textWhite);
+        field.setCaretColor(GUIConstants.textWhite);
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(GUIConstants.darkBorder, 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
     }
 }
