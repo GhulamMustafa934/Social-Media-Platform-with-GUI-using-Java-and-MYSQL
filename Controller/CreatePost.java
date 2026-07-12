@@ -1,8 +1,5 @@
 package Controller;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,58 +19,11 @@ public class CreatePost {
         statement = database.getStatement();
     }
     
-    // Copy image to uploads folder
-    public String copyImage(String sourcePath) {
-        try {
-            File source = new File(sourcePath);
-            String fileName = System.currentTimeMillis() + "_" + source.getName();
-            
-            // Create uploads folder if it doesn't exist
-            File uploadDir = new File("uploads");
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-            
-            String destPath = "uploads/" + fileName;
-            File dest = new File(destPath);
-            
-            Files.copy(source.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            return destPath;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    // Delete image file
-    public void deleteImageFile(String imagePath) {
-        if (imagePath != null && !imagePath.isEmpty()) {
-            File imageFile = new File(imagePath);
-            if (imageFile.exists()) {
-                imageFile.delete();
-                System.out.println("✅ Image deleted: " + imagePath);
-            }
-        }
-    }
-    
-    // Save post with image support
+    // Save post and return the generated ID
     public int savePost(Post post) {
         try {
-            String query;
-            if (post.getImagePath() != null && !post.getImagePath().isEmpty()) {
-                // Copy image to uploads folder
-                String savedPath = copyImage(post.getImagePath());
-                if (savedPath == null) {
-                    System.out.println("❌ Failed to copy image!");
-                    return -1;
-                }
-                query = "INSERT INTO posts (content, image_path, userId, dateTime) VALUES ('"
-                    + post.getContent() + "', '" + savedPath + "', " 
-                    + post.getUser().getID() + ", NOW())";
-            } else {
-                query = "INSERT INTO posts (content, userId, dateTime) VALUES ('"
-                    + post.getContent() + "', " + post.getUser().getID() + ", NOW())";
-            }
+            String query = "INSERT INTO posts (content, userId, dateTime) VALUES ('"
+                + post.getContent() + "', " + post.getUser().getID() + ", NOW())";
             
             int result = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
             
@@ -90,42 +40,7 @@ public class CreatePost {
         }
     }
     
-    // ✅ NEW: Update post with image
-    public boolean updatePostWithImage(int postId, String newContent, String newImagePath) {
-        try {
-            // First, get existing image path
-            String getImageQuery = "SELECT image_path FROM posts WHERE id = " + postId;
-            ResultSet rs = statement.executeQuery(getImageQuery);
-            String oldImagePath = null;
-            if (rs.next()) {
-                oldImagePath = rs.getString("image_path");
-            }
-            
-            String query;
-            if (newImagePath != null && !newImagePath.isEmpty()) {
-                // Delete old image if exists
-                deleteImageFile(oldImagePath);
-                
-                // Copy new image
-                String savedPath = copyImage(newImagePath);
-                if (savedPath == null) {
-                    System.out.println("❌ Failed to copy new image!");
-                    return false;
-                }
-                query = "UPDATE posts SET content = '" + newContent + "', image_path = '" + savedPath + "' WHERE id = " + postId;
-            } else {
-                query = "UPDATE posts SET content = '" + newContent + "' WHERE id = " + postId;
-            }
-            
-            int result = statement.executeUpdate(query);
-            return result > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    // Get all posts with image path
+    // Get all posts
     public ArrayList<Post> getAllPosts() {
         ArrayList<Post> posts = new ArrayList<>();
         try {
@@ -138,7 +53,6 @@ public class CreatePost {
                 Post post = new Post();
                 post.setId(rs.getInt("id"));
                 post.setContent(rs.getString("content"));
-                post.setImagePath(rs.getString("image_path"));
                 post.setDateTime(rs.getTimestamp("dateTime").toLocalDateTime());
                 
                 User user = new User();
@@ -158,14 +72,6 @@ public class CreatePost {
     // Delete post
     public boolean deletePost(int postId) {
         try {
-            // First get the image path to delete the file
-            String getImageQuery = "SELECT image_path FROM posts WHERE id = " + postId;
-            ResultSet rs = statement.executeQuery(getImageQuery);
-            if (rs.next()) {
-                String imagePath = rs.getString("image_path");
-                deleteImageFile(imagePath);
-            }
-            
             String query = "DELETE FROM posts WHERE id = " + postId;
             int result = statement.executeUpdate(query);
             return result > 0;
@@ -175,7 +81,7 @@ public class CreatePost {
         }
     }
     
-    // Update post content only
+    // Update post content
     public boolean updatePost(int postId, String newContent) {
         try {
             String query = "UPDATE posts SET content = '" + newContent + "' WHERE id = " + postId;
@@ -199,7 +105,6 @@ public class CreatePost {
                 Post post = new Post();
                 post.setId(rs.getInt("id"));
                 post.setContent(rs.getString("content"));
-                post.setImagePath(rs.getString("image_path"));
                 post.setDateTime(rs.getTimestamp("dateTime").toLocalDateTime());
                 
                 User user = new User();
