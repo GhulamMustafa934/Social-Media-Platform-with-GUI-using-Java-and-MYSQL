@@ -52,8 +52,9 @@ public class FriendsGUI {
         titleLabel.setForeground(GUIConstants.textWhite);
         headerPanel.add(titleLabel, BorderLayout.WEST);
 
-        JLabel homeIcon = new JLabel("🏠", SwingConstants.CENTER);
-        homeIcon.setFont(new Font("Segoe UI", Font.PLAIN, 22));
+        JLabel homeIcon = new JLabel("Home", SwingConstants.CENTER);
+        homeIcon.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        homeIcon.setForeground(GUIConstants.accentBlue);
         homeIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
         homeIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 4));
         headerPanel.add(homeIcon, BorderLayout.EAST);
