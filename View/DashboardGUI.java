@@ -52,26 +52,10 @@ public class DashboardGUI {
         JPanel mainPanel = new JPanel(new BorderLayout(0, 0));
         mainPanel.setBackground(GUIConstants.darkBg);
 
-        // ========== TOP HEADER ==========
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(GUIConstants.darkHeader);
-        headerPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, GUIConstants.darkBorder),
-            BorderFactory.createEmptyBorder(15, 25, 15, 25)
-        ));
-        headerPanel.setPreferredSize(new Dimension(0, 60));
-
-        JLabel headerTitle = new JLabel("Social Media Platform");
-        headerTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        headerTitle.setForeground(GUIConstants.textWhite);
-        headerPanel.add(headerTitle, BorderLayout.WEST);
-
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
-
         // ========== CONTENT PANEL ==========
         JPanel contentPanel = new JPanel(new BorderLayout(15, 0));
         contentPanel.setBackground(GUIConstants.darkBg);
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // ========== LEFT: SIDEBAR NAV ==========
         JPanel sidebar = new JPanel();
@@ -89,14 +73,27 @@ public class DashboardGUI {
         userName.setFont(new Font("Segoe UI", Font.BOLD, 16));
         userName.setForeground(GUIConstants.textWhite);
         userName.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+        userName.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        userName.setToolTipText("View / edit your profile");
+        userName.addMouseListener(new MouseListener() {
+            @Override public void mouseReleased(MouseEvent e) {}
+            @Override public void mousePressed(MouseEvent e) {}
+            @Override public void mouseExited(MouseEvent e) { userName.setForeground(GUIConstants.textWhite); }
+            @Override public void mouseEntered(MouseEvent e) { userName.setForeground(GUIConstants.accentBlue); }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                frame.dispose();
+                new ProfileGUI(currentUser);
+            }
+        });
         sidebarTop.add(userName);
         sidebarTop.add(javax.swing.Box.createRigidArea(new Dimension(0, 20)));
 
-        navHome = createNavItem("🏠", "Home");
-        navPosts = createNavItem("📄", "Posts");
-        navComments = createNavItem("💬", "Comments");
-        navLikes = createNavItem("❤", "Likes");
-        navFriends = createNavItem("👥", "Friends");
+        navHome = createNavItem("Home");
+        navPosts = createNavItem("Posts");
+        navComments = createNavItem("Comments");
+        navLikes = createNavItem("Likes");
+        navFriends = createNavItem("Friends");
 
         sidebarTop.add(navHome);
         sidebarTop.add(navPosts);
@@ -111,10 +108,14 @@ public class DashboardGUI {
         JPanel feedMainPanel = new JPanel(new BorderLayout(0, 15));
         feedMainPanel.setBackground(GUIConstants.darkBg);
 
+        // Top block: title + create-post box, stacked, fixed height
+        JPanel topBlock = new JPanel(new BorderLayout(0, 12));
+        topBlock.setBackground(GUIConstants.darkBg);
+
         feedTitle = new JLabel("Home", SwingConstants.LEFT);
         feedTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
         feedTitle.setForeground(GUIConstants.textWhite);
-        feedMainPanel.add(feedTitle, BorderLayout.NORTH);
+        topBlock.add(feedTitle, BorderLayout.NORTH);
 
         // Create Post
         JPanel createPostPanel = new JPanel(new BorderLayout(5, 8));
@@ -154,7 +155,8 @@ public class DashboardGUI {
         postBtnPanel.add(postButton);
         createPostPanel.add(postBtnPanel, BorderLayout.SOUTH);
 
-        feedMainPanel.add(createPostPanel, BorderLayout.CENTER);
+        topBlock.add(createPostPanel, BorderLayout.CENTER);
+        feedMainPanel.add(topBlock, BorderLayout.NORTH);
 
         // Feed
         feedPanel = new JPanel();
@@ -166,7 +168,7 @@ public class DashboardGUI {
         scrollPane.getViewport().setBackground(GUIConstants.darkBg);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        feedMainPanel.add(scrollPane, BorderLayout.SOUTH);
+        feedMainPanel.add(scrollPane, BorderLayout.CENTER);
 
         contentPanel.add(feedMainPanel, BorderLayout.CENTER);
         mainPanel.add(contentPanel, BorderLayout.CENTER);
@@ -231,17 +233,13 @@ public class DashboardGUI {
     }
 
     // ---------- Sidebar nav item builder ----------
-    private JPanel createNavItem(String icon, String label) {
-        JPanel item = new JPanel(new BorderLayout(10, 0));
+    private JPanel createNavItem(String label) {
+        JPanel item = new JPanel(new BorderLayout());
         item.setBackground(GUIConstants.darkCard);
-        item.setBorder(BorderFactory.createEmptyBorder(10, 8, 10, 8));
+        item.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 8));
         item.setCursor(new Cursor(Cursor.HAND_CURSOR));
         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         item.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
-
-        JLabel iconLabel = new JLabel(icon);
-        iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        item.add(iconLabel, BorderLayout.WEST);
 
         JLabel textLabel = new JLabel(label);
         textLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -393,7 +391,7 @@ public class DashboardGUI {
         // COMMENT COUNT (click to add a comment)
         int comments = commentPost.getCommentCount(postId);
         String commentWord = comments == 1 ? "Comment" : "Comments";
-        JLabel commentBtn = new JLabel("💬 " + comments + " " + commentWord);
+        JLabel commentBtn = new JLabel(comments + " " + commentWord);
         commentBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         commentBtn.setForeground(GUIConstants.textGray);
         commentBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));

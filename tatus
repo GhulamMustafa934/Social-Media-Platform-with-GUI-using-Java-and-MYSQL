@@ -1,0 +1,142 @@
+warning: in the working copy of 'View/DashboardGUI.java', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/View/DashboardGUI.java b/View/DashboardGUI.java[m
+[1mindex d182aba..d44fe16 100644[m
+[1m--- a/View/DashboardGUI.java[m
+[1m+++ b/View/DashboardGUI.java[m
+[36m@@ -52,26 +52,10 @@[m [mpublic class DashboardGUI {[m
+         JPanel mainPanel = new JPanel(new BorderLayout(0, 0));[m
+         mainPanel.setBackground(GUIConstants.darkBg);[m
+ [m
+[31m-        // ========== TOP HEADER ==========[m
+[31m-        JPanel headerPanel = new JPanel(new BorderLayout());[m
+[31m-        headerPanel.setBackground(GUIConstants.darkHeader);[m
+[31m-        headerPanel.setBorder(BorderFactory.createCompoundBorder([m
+[31m-            BorderFactory.createMatteBorder(0, 0, 1, 0, GUIConstants.darkBorder),[m
+[31m-            BorderFactory.createEmptyBorder(15, 25, 15, 25)[m
+[31m-        ));[m
+[31m-        headerPanel.setPreferredSize(new Dimension(0, 60));[m
+[31m-[m
+[31m-        JLabel headerTitle = new JLabel("Social Media Platform");[m
+[31m-        headerTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));[m
+[31m-        headerTitle.setForeground(GUIConstants.textWhite);[m
+[31m-        headerPanel.add(headerTitle, BorderLayout.WEST);[m
+[31m-[m
+[31m-        mainPanel.add(headerPanel, BorderLayout.NORTH);[m
+[31m-[m
+         // ========== CONTENT PANEL ==========[m
+         JPanel contentPanel = new JPanel(new BorderLayout(15, 0));[m
+         contentPanel.setBackground(GUIConstants.darkBg);[m
+[31m-        contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));[m
+[32m+[m[32m        contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));[m
+ [m
+         // ========== LEFT: SIDEBAR NAV ==========[m
+         JPanel sidebar = new JPanel();[m
+[36m@@ -89,14 +73,27 @@[m [mpublic class DashboardGUI {[m
+         userName.setFont(new Font("Segoe UI", Font.BOLD, 16));[m
+         userName.setForeground(GUIConstants.textWhite);[m
+         userName.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);[m
+[32m+[m[32m        userName.setCursor(new Cursor(Cursor.HAND_CURSOR));[m
+[32m+[m[32m        userName.setToolTipText("View / edit your profile");[m
+[32m+[m[32m        userName.addMouseListener(new MouseListener() {[m
+[32m+[m[32m            @Override public void mouseReleased(MouseEvent e) {}[m
+[32m+[m[32m            @Override public void mousePressed(MouseEvent e) {}[m
+[32m+[m[32m            @Override public void mouseExited(MouseEvent e) { userName.setForeground(GUIConstants.textWhite); }[m
+[32m+[m[32m            @Override public void mouseEntered(MouseEvent e) { userName.setForeground(GUIConstants.accentBlue); }[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void mouseClicked(MouseEvent e) {[m
+[32m+[m[32m                frame.dispose();[m
+[32m+[m[32m                new ProfileGUI(currentUser);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+         sidebarTop.add(userName);[m
+         sidebarTop.add(javax.swing.Box.createRigidArea(new Dimension(0, 20)));[m
+ [m
+[31m-        navHome = createNavItem("🏠", "Home");[m
+[31m-        navPosts = createNavItem("📄", "Posts");[m
+[31m-        navComments = createNavItem("💬", "Comments");[m
+[31m-        navLikes = createNavItem("❤", "Likes");[m
+[31m-        navFriends = createNavItem("👥", "Friends");[m
+[32m+[m[32m        navHome = createNavItem("Home");[m
+[32m+[m[32m        navPosts = createNavItem("Posts");[m
+[32m+[m[32m        navComments = createNavItem("Comments");[m
+[32m+[m[32m        navLikes = createNavItem("Likes");[m
+[32m+[m[32m        navFriends = createNavItem("Friends");[m
+ [m
+         sidebarTop.add(navHome);[m
+         sidebarTop.add(navPosts);[m
+[36m@@ -111,10 +108,14 @@[m [mpublic class DashboardGUI {[m
+         JPanel feedMainPanel = new JPanel(new BorderLayout(0, 15));[m
+         feedMainPanel.setBackground(GUIConstants.darkBg);[m
+ [m
+[32m+[m[32m        // Top block: title + create-post box, stacked, fixed height[m
+[32m+[m[32m        JPanel topBlock = new JPanel(new BorderLayout(0, 12));[m
+[32m+[m[32m        topBlock.setBackground(GUIConstants.darkBg);[m
+[32m+[m
+         feedTitle = new JLabel("Home", SwingConstants.LEFT);[m
+         feedTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));[m
+         feedTitle.setForeground(GUIConstants.textWhite);[m
+[31m-        feedMainPanel.add(feedTitle, BorderLayout.NORTH);[m
+[32m+[m[32m        topBlock.add(feedTitle, BorderLayout.NORTH);[m
+ [m
+         // Create Post[m
+         JPanel createPostPanel = new JPanel(new BorderLayout(5, 8));[m
+[36m@@ -154,7 +155,8 @@[m [mpublic class DashboardGUI {[m
+         postBtnPanel.add(postButton);[m
+         createPostPanel.add(postBtnPanel, BorderLayout.SOUTH);[m
+ [m
+[31m-        feedMainPanel.add(createPostPanel, BorderLayout.CENTER);[m
+[32m+[m[32m        topBlock.add(createPostPanel, BorderLayout.CENTER);[m
+[32m+[m[32m        feedMainPanel.add(topBlock, BorderLayout.NORTH);[m
+ [m
+         // Feed[m
+         feedPanel = new JPanel();[m
+[36m@@ -166,7 +168,7 @@[m [mpublic class DashboardGUI {[m
+         scrollPane.getViewport().setBackground(GUIConstants.darkBg);[m
+         scrollPane.getVerticalScrollBar().setUnitIncrement(16);[m
+ [m
+[31m-        feedMainPanel.add(scrollPane, BorderLayout.SOUTH);[m
+[32m+[m[32m        feedMainPanel.add(scrollPane, BorderLayout.CENTER);[m
+ [m
+         contentPanel.add(feedMainPanel, BorderLayout.CENTER);[m
+         mainPanel.add(contentPanel, BorderLayout.CENTER);[m
+[36m@@ -231,18 +233,14 @@[m [mpublic class DashboardGUI {[m
+     }[m
+ [m
+     // ---------- Sidebar nav item builder ----------[m
+[31m-    private JPanel createNavItem(String icon, String label) {[m
+[31m-        JPanel item = new JPanel(new BorderLayout(10, 0));[m
+[32m+[m[32m    private JPanel createNavItem(String label) {[m
+[32m+[m[32m        JPanel item = new JPanel(new BorderLayout());[m
+         item.setBackground(GUIConstants.darkCard);[m
+[31m-        item.setBorder(BorderFactory.createEmptyBorder(10, 8, 10, 8));[m
+[32m+[m[32m        item.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 8));[m
+         item.setCursor(new Cursor(Cursor.HAND_CURSOR));[m
+         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));[m
+         item.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);[m
+ [m
+[31m-        JLabel iconLabel = new JLabel(icon);[m
+[31m-        iconLabel.setFont(new Font("Segoe UI", Font.PLAIN, 15));[m
+[31m-        item.add(iconLabel, BorderLayout.WEST);[m
+[31m-[m
+         JLabel textLabel = new JLabel(label);[m
+         textLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));[m
+         textLabel.setForeground(GUIConstants.textWhite);[m
+[36m@@ -393,7 +391,7 @@[m [mpublic class DashboardGUI {[m
+         // COMMENT COUNT (click to add a comment)[m
+         int comments = commentPost.getCommentCount(postId);[m
+         String commentWord = comments == 1 ? "Comment" : "Comments";[m
+[31m-        JLabel commentBtn = new JLabel("💬 " + comments + " " + commentWord);[m
+[32m+[m[32m        JLabel commentBtn = new JLabel(comments + " " + commentWord);[m
+         commentBtn.setFont(new Font("Segoe UI", Font.PLAIN, 13));[m
+         commentBtn.setForeground(GUIConstants.textGray);[m
+         commentBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));[m
+[1mdiff --git a/out/View/DashboardGUI$1.class b/out/View/DashboardGUI$1.class[m
+[1mindex 0463326..e26207c 100644[m
+Binary files a/out/View/DashboardGUI$1.class and b/out/View/DashboardGUI$1.class differ
+[1mdiff --git a/out/View/DashboardGUI$2.class b/out/View/DashboardGUI$2.class[m
+[1mindex e5cafed..9e4ae76 100644[m
+Binary files a/out/View/DashboardGUI$2.class and b/out/View/DashboardGUI$2.class differ
+[1mdiff --git a/out/View/DashboardGUI$3.class b/out/View/DashboardGUI$3.class[m
+[1mindex 894c7a5..7cee5e0 100644[m
+Binary files a/out/View/DashboardGUI$3.class and b/out/View/DashboardGUI$3.class differ
+[1mdiff --git a/out/View/Da
